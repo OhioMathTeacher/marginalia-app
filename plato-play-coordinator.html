@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plato Play Draft Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --parchment: #f7f3ea;
+  --ink: #2a2418;
+  --cave-dark: #1a2a40;
+  --cave-glow: #d4a843;
+  --muted: #7f7565;
+  --line: #dacdaf;
+  --card: #fffdf7;
+  --accent: #7a3b10;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Crimson Pro', serif;
+  background: linear-gradient(175deg, #f8f5ed 0%, #f1ecdf 100%);
+  color: var(--ink);
+  min-height: 100vh;
+}
+.header {
+  background: var(--cave-dark);
+  color: #ddd3c0;
+  padding: 1.25rem 1.6rem 1rem;
+  border-bottom: 1px solid rgba(212,168,67,0.28);
+}
+.header h1 {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  font-size: 1.7rem;
+}
+.header p {
+  font-family: 'DM Sans', sans-serif;
+  color: #9f9484;
+  font-size: 0.83rem;
+  margin-top: 0.2rem;
+}
+.toolbar {
+  margin-top: 0.7rem;
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(212,168,67,0.32);
+  color: #d8cebd;
+  background: transparent;
+  border-radius: 5px;
+  padding: 0.38rem 0.65rem;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--cave-glow); color: #efe6d3; }
+.layout {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 0.9rem;
+}
+.sidebar,
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+}
+.sidebar {
+  padding: 0.85rem;
+  height: fit-content;
+  position: sticky;
+  top: 0.75rem;
+}
+.sidebar h2,
+.panel h2 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+.group-list {
+  display: grid;
+  gap: 0.45rem;
+}
+.group-btn {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  text-align: left;
+  cursor: pointer;
+}
+.group-btn strong {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: #2f2d25;
+}
+.group-btn span {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 0.1rem;
+}
+.group-btn.active {
+  border-color: rgba(122,59,16,0.5);
+  background: #fff8ea;
+}
+.help {
+  margin-top: 0.9rem;
+  border-top: 1px dashed var(--line);
+  padding-top: 0.7rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.setup {
+  margin-top: 0.9rem;
+  border-top: 1px dashed var(--line);
+  padding-top: 0.7rem;
+  display: grid;
+  gap: 0.55rem;
+}
+.setup h3 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.setup-item {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.45rem;
+  background: #fff;
+  display: grid;
+  gap: 0.25rem;
+}
+.setup-item label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.setup-item input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.32rem 0.4rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.73rem;
+  background: #fffdfa;
+}
+.main {
+  display: grid;
+  gap: 0.85rem;
+}
+.editor-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.panel {
+  padding: 0.85rem;
+}
+.panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+.panel-title h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.panel-title .sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+textarea {
+  width: 100%;
+  min-height: 460px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fffdfa;
+  color: #2d2a20;
+  padding: 0.65rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+.preview {
+  min-height: 460px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 0.8rem;
+  background: #fffcf3;
+  overflow: auto;
+}
+.script-line { margin-bottom: 0.45rem; }
+.script-heading {
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.1em;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  margin: 0.8rem 0 0.5rem;
+  color: #40372a;
+}
+.script-stage {
+  text-align: center;
+  color: #6c6253;
+  font-style: italic;
+  margin: 0.5rem 0;
+}
+.script-char {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #3c3327;
+  margin-top: 0.55rem;
+}
+.script-dialogue {
+  margin-left: 1.6rem;
+  line-height: 1.55;
+}
+.combine-panel .preview {
+  min-height: 270px;
+}
+.combine-actions {
+  margin-bottom: 0.55rem;
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.combine-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid #c59f64;
+  background: #e9cf9f;
+  color: #3b2b16;
+  padding: 0.38rem 0.65rem;
+  cursor: pointer;
+}
+.combine-btn:hover { background: #e3c48c; }
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+  .editor-wrap { grid-template-columns: 1fr; }
+  textarea, .preview { min-height: 320px; }
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>Plato Play Draft Studio</h1>
+  <p>Script drafting only: group drafts, shared visibility, and one-click combined script for table read.</p>
+  <div class="toolbar">
+    <button class="btn" onclick="exportProject()">Export Project</button>
+    <button class="btn" onclick="document.getElementById('importFile').click()">Import Project</button>
+    <button class="btn" onclick="seedTemplates()">Load Starter Templates</button>
+    <button class="btn" onclick="clearAllDrafts()">Clear Drafts</button>
+    <input id="importFile" type="file" accept=".json" style="display:none" onchange="importProject(event)">
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Group Drafts</h2>
+    <div class="group-list" id="groupList"></div>
+    <div class="setup">
+      <h3>Group Setup (Saved)</h3>
+      <div id="groupSetup"></div>
+    </div>
+    <div class="help">
+      <strong>Script Format Tips</strong><br>
+      <code># Scene 1</code> for headings<br>
+      <code>[Lights dim.]</code> for stage directions<br>
+      <code>SOCRATES: Dialogue text...</code> for dialogue
+      <br><br>
+      <strong>Pair D cue markers (optional):</strong><br>
+      <code>[[OPENING]]</code><br>
+      <code>[[TRANSITION_2]]</code><br>
+      <code>[[TRANSITION_3]]</code><br>
+      <code>[[CLOSING]]</code>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="panel editor-wrap">
+      <div>
+        <div class="panel-title">
+          <h3 id="editorTitle">Triad A Draft</h3>
+          <span class="sub" id="editorScene">Scene 1</span>
+        </div>
+        <textarea id="draftEditor" placeholder="Write your group's script draft here..."></textarea>
+      </div>
+      <div>
+        <div class="panel-title">
+          <h3>Formatted Script Preview</h3>
+          <span class="sub">Real script view</span>
+        </div>
+        <div class="preview" id="groupPreview"></div>
+      </div>
+    </section>
+
+    <section class="panel combine-panel">
+      <div class="panel-title">
+        <h3>Full Allegory Draft</h3>
+        <span class="sub">Before Day 19: click Combine Draft Scripts</span>
+      </div>
+      <div class="combine-actions">
+        <button class="combine-btn" onclick="combineDraftScripts()">Combine Draft Scripts</button>
+        <button class="combine-btn" onclick="copyCombinedScript()">Copy Combined Script</button>
+      </div>
+      <div class="preview" id="combinedPreview"></div>
+    </section>
+  </main>
+</div>
+
+<script>
+const STORAGE_KEY = 'plato_play_draft_studio_v1';
+
+const defaultGroups = [
+  { id: 'A', label: 'Triad A', scene: 'Scene 1: The Cave + Liberation', docUrl: '' },
+  { id: 'B', label: 'Triad B', scene: 'Scene 2: The Ascent', docUrl: '' },
+  { id: 'C', label: 'Triad C', scene: 'Scene 3: The Return', docUrl: '' },
+  { id: 'D', label: 'Pair D', scene: 'Narrator + Production Cues', docUrl: '' }
+];
+
+let state = normalizeState(loadState());
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function normalizeState(raw) {
+  const base = {
+    currentGroup: 'A',
+    groups: defaultGroups.map(g => ({ ...g })),
+    drafts: { A: '', B: '', C: '', D: '' },
+    combinedScript: ''
+  };
+  if (!raw) return base;
+
+  const merged = {
+    currentGroup: raw.currentGroup || 'A',
+    groups: Array.isArray(raw.groups)
+      ? defaultGroups.map(g => {
+          const found = raw.groups.find(x => x.id === g.id) || {};
+          return {
+            id: g.id,
+            label: found.label || g.label,
+            scene: found.scene || g.scene,
+            docUrl: found.docUrl || ''
+          };
+        })
+      : defaultGroups.map(g => ({ ...g })),
+    drafts: { ...base.drafts, ...(raw.drafts || {}) },
+    combinedScript: raw.combinedScript || ''
+  };
+
+  if (!merged.groups.find(g => g.id === merged.currentGroup)) merged.currentGroup = 'A';
+  return merged;
+}
+
+function groupById(id) {
+  return state.groups.find(g => g.id === id);
+}
+
+function renderGroupButtons() {
+  const list = document.getElementById('groupList');
+  list.innerHTML = '';
+  state.groups.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'group-btn' + (g.id === state.currentGroup ? ' active' : '');
+    btn.onclick = () => {
+      state.currentGroup = g.id;
+      saveState();
+      renderEditor();
+      renderGroupButtons();
+    };
+    btn.innerHTML = `<strong>${escapeHtml(g.label)}</strong><span>${escapeHtml(g.scene)}</span>`;
+    list.appendChild(btn);
+  });
+}
+
+function renderGroupSetup() {
+  const wrap = document.getElementById('groupSetup');
+  wrap.innerHTML = '';
+  state.groups.forEach((g, idx) => {
+    const item = document.createElement('div');
+    item.className = 'setup-item';
+    item.innerHTML = `
+      <label>${escapeHtml(g.id)} Label</label>
+      <input value="${escapeAttr(g.label)}" oninput="updateGroupMeta(${idx}, 'label', this.value)">
+      <label>Scene Description</label>
+      <input value="${escapeAttr(g.scene)}" oninput="updateGroupMeta(${idx}, 'scene', this.value)">
+      <label>Google Doc URL (Optional)</label>
+      <input value="${escapeAttr(g.docUrl || '')}" placeholder="https://docs.google.com/..." oninput="updateGroupMeta(${idx}, 'docUrl', this.value)">
+    `;
+    wrap.appendChild(item);
+  });
+}
+
+function updateGroupMeta(idx, field, value) {
+  state.groups[idx][field] = value;
+  saveState();
+  renderGroupButtons();
+  renderEditor();
+}
+
+function renderEditor() {
+  const group = groupById(state.currentGroup);
+  document.getElementById('editorTitle').textContent = group.label + ' Draft';
+  if (group.docUrl && /^https?:\/\//i.test(group.docUrl)) {
+    document.getElementById('editorScene').innerHTML = `<a href="${escapeAttr(group.docUrl)}" target="_blank" rel="noopener">${escapeHtml(group.scene)} (Open Doc)</a>`;
+  } else {
+    document.getElementById('editorScene').textContent = group.scene;
+  }
+
+  const editor = document.getElementById('draftEditor');
+  editor.placeholder = `Write ${group.label}'s working draft here (this box is editable and saved in the app).`;
+  editor.value = state.drafts[state.currentGroup] || '';
+  editor.oninput = () => {
+    state.drafts[state.currentGroup] = editor.value;
+    saveState();
+    renderGroupPreview();
+  };
+
+  renderGroupPreview();
+  renderCombinedPreview();
+}
+
+function renderGroupPreview() {
+  const txt = state.drafts[state.currentGroup] || '';
+  document.getElementById('groupPreview').innerHTML = renderScriptHtml(txt);
+}
+
+function renderCombinedPreview() {
+  const txt = state.combinedScript || 'No combined script yet. Click "Combine Draft Scripts".';
+  document.getElementById('combinedPreview').innerHTML = renderScriptHtml(txt);
+}
+
+function renderScriptHtml(raw) {
+  if (!raw.trim()) return '<div class="script-stage">No script text yet.</div>';
+
+  const lines = raw.split('\n');
+  const html = [];
+
+  lines.forEach(line => {
+    const t = line.trim();
+    if (!t) {
+      html.push('<div class="script-line">&nbsp;</div>');
+      return;
+    }
+
+    if (t.startsWith('#')) {
+      html.push(`<div class="script-heading">${escapeHtml(t.replace(/^#+\s*/, ''))}</div>`);
+      return;
+    }
+
+    if ((t.startsWith('[') && t.endsWith(']')) || (t.startsWith('(') && t.endsWith(')'))) {
+      html.push(`<div class="script-stage">${escapeHtml(t)}</div>`);
+      return;
+    }
+
+    const m = t.match(/^([A-Z][A-Z0-9_\- ]{1,30}):\s*(.+)$/);
+    if (m) {
+      html.push(`<div class="script-char">${escapeHtml(m[1])}</div>`);
+      html.push(`<div class="script-dialogue">${escapeHtml(m[2])}</div>`);
+      return;
+    }
+
+    html.push(`<div class="script-line">${escapeHtml(t)}</div>`);
+  });
+
+  return html.join('');
+}
+
+function extractNarratorBlocks(rawD) {
+  const blocks = {
+    OPENING: '',
+    TRANSITION_2: '',
+    TRANSITION_3: '',
+    CLOSING: '',
+    OTHER: ''
+  };
+
+  const markerRegex = /^\[\[(OPENING|TRANSITION_2|TRANSITION_3|CLOSING)\]\]\s*$/;
+  let current = 'OTHER';
+  rawD.split('\n').forEach(line => {
+    const marker = line.trim().match(markerRegex);
+    if (marker) {
+      current = marker[1];
+      return;
+    }
+    blocks[current] += (blocks[current] ? '\n' : '') + line;
+  });
+
+  return blocks;
+}
+
+function section(title, body) {
+  const trimmed = (body || '').trim();
+  if (!trimmed) return '';
+  return `# ${title}\n${trimmed}\n`;
+}
+
+function combineDraftScripts() {
+  const a = state.drafts.A || '';
+  const b = state.drafts.B || '';
+  const c = state.drafts.C || '';
+  const d = state.drafts.D || '';
+  const gA = groupById('A');
+  const gB = groupById('B');
+  const gC = groupById('C');
+
+  const nb = extractNarratorBlocks(d);
+
+  const pieces = [];
+  pieces.push('# Plato: Allegory of the Cave - One-Act Draft');
+  pieces.push('[Combined from group drafts. Edit after table read.]\n');
+
+  if (nb.OPENING.trim()) pieces.push(section('Narrator Opening', nb.OPENING));
+  else if (d.trim()) pieces.push(section('Narrator / Production', d));
+
+  pieces.push(section(`${gA.label} - ${gA.scene}`, a));
+  if (nb.TRANSITION_2.trim()) pieces.push(section('Narrator Transition to Scene 2', nb.TRANSITION_2));
+
+  pieces.push(section(`${gB.label} - ${gB.scene}`, b));
+  if (nb.TRANSITION_3.trim()) pieces.push(section('Narrator Transition to Scene 3', nb.TRANSITION_3));
+
+  pieces.push(section(`${gC.label} - ${gC.scene}`, c));
+  if (nb.CLOSING.trim()) pieces.push(section('Narrator Closing', nb.CLOSING));
+
+  state.combinedScript = pieces.filter(Boolean).join('\n');
+  saveState();
+  renderCombinedPreview();
+}
+
+function copyCombinedScript() {
+  const txt = state.combinedScript || '';
+  if (!txt.trim()) {
+    alert('No combined script yet. Click Combine Draft Scripts first.');
+    return;
+  }
+  navigator.clipboard.writeText(txt).then(() => {
+    alert('Combined script copied.');
+  }).catch(() => {
+    alert('Clipboard blocked. Copy manually from preview.');
+  });
+}
+
+function exportProject() {
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    app: 'Plato Play Draft Studio',
+    version: 1,
+    state
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `plato-play-drafts-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function importProject(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const payload = JSON.parse(e.target.result);
+      if (!payload.state || !payload.state.drafts) throw new Error('Invalid project file.');
+      state = normalizeState(payload.state);
+      saveState();
+      renderGroupButtons();
+      renderGroupSetup();
+      renderEditor();
+      alert('Project imported.');
+    } catch (err) {
+      alert('Import failed: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function clearAllDrafts() {
+  if (!confirm('Clear all group drafts and combined script?')) return;
+  state.drafts = { A: '', B: '', C: '', D: '' };
+  state.combinedScript = '';
+  saveState();
+  renderEditor();
+}
+
+function seedTemplates() {
+  state.drafts.A = `# Scene 1\n[Dim light. Prisoners face wall.]\n\nSOCRATES: Imagine people chained in a cave since childhood.\nGLAUCON: They see only shadows, then?\nSOCRATES: Yes. They take shadows for reality.`;
+
+  state.drafts.B = `# Scene 2\n[Freed prisoner climbs toward bright light.]\n\nPRISONER: My eyes hurt. Everything is too bright.\nGUIDE: Stay with it. You are seeing more clearly now.`;
+
+  state.drafts.C = `# Scene 3\n[Prisoner returns to cave.]\n\nPRISONER: You are watching shadows, not the real things.\nPRISONER IN CAVE: Your eyes are ruined. We trust what we see here.`;
+
+  state.drafts.D = `[[OPENING]]\nNARRATOR: Tonight, we enter Plato's cave.\n\n[[TRANSITION_2]]\nNARRATOR: The journey upward begins in pain.\n\n[[TRANSITION_3]]\nNARRATOR: Now the traveler returns to those still chained.\n\n[[CLOSING]]\nNARRATOR: The question remains: what shadows still govern us?`;
+
+  if (!state.currentGroup) state.currentGroup = 'A';
+  saveState();
+  renderEditor();
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+renderGroupButtons();
+renderGroupSetup();
+renderEditor();
+
+function escapeAttr(s) {
+  return escapeHtml(s).replace(/`/g, '&#96;');
+}
+</script>
+</body>
+</html>
