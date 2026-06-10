@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Close Reader",
+  "version": "0.1.0",
+  "identifier": "com.todd.closereader",
+  "mainBinaryName": "close-reader",
+  "build": {
+    "frontendDist": [
+      "../close-reader.html",
+      "../plato-play-coordinator.html",
+      "../vendor/jszip.min.js",
+      "../vendor/mammoth.browser.min.js",
+      "../vendor/pdf.min.mjs",
+      "../vendor/pdf.worker.min.mjs"
+    ]
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Close Reader",
+        "url": "close-reader.html",
+        "width": 1440,
+        "height": 940,
+        "minWidth": 1080,
+        "minHeight": 720,
+        "resizable": true,
+        "center": true
+      }
+    ],
+    "security": {
+      "capabilities": [
+        "default"
+      ],
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "category": "Education",
+    "shortDescription": "Interactive close reading and annotation app.",
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "txt",
+          "docx",
+          "pdf"
+        ],
+        "name": "Reading documents",
+        "description": "Documents that can be loaded into Close Reader"
+      }
+    ]
+  }
+}
