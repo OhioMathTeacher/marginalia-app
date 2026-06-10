@@ -50,11 +50,48 @@ Use **Export** to keep a JSON backup or move your work to another machine.
 
 ## Running it yourself
 
-The app is a single self-contained `close-reader.html` plus a small `vendor/`
-folder (for `.docx`/`.pdf` import). Serve the repository root with any static
-server — e.g. `python3 -m http.server` — and open `close-reader.html`. The repo
-also carries a Tauri scaffold (`src-tauri/`) for building a native desktop
-version, but the web app is the primary surface.
+You don't need to install anything to use Marginalia — the hosted version at
+[https://ohiomathteacher.github.io/marginalia/](https://ohiomathteacher.github.io/marginalia/)
+runs in any modern browser on macOS, Windows, Linux, ChromeOS, or an iPad,
+and stores your work in *that* browser's local storage. For most people,
+that's the whole install.
+
+But if you want your own copy — for offline use, to host it on a school
+server, or to develop against it — there are two paths:
+
+### Path 1 — Static web app (simplest)
+
+The app is a single self-contained `close-reader.html` plus a small
+`vendor/` folder for `.docx`/`.pdf` import. Clone, serve, open in a browser:
+
+```bash
+git clone https://github.com/OhioMathTeacher/marginalia-app.git
+cd marginalia-app
+python3 -m http.server 8000
+```
+
+Then open **http://localhost:8000/close-reader.html**. On Windows, use
+`py -m http.server 8000`. Python 3 is the only dependency.
+
+### Path 2 — Native desktop app (Tauri)
+
+For a real desktop app — its own window, no browser tab, an entry in your
+applications menu — there's a [Tauri](https://tauri.app/) scaffold in
+`src-tauri/`. You'll need Node 20+ and a Rust toolchain ([install rustup](https://rustup.rs/)).
+
+```bash
+git clone https://github.com/OhioMathTeacher/marginalia-app.git
+cd marginalia-app
+npm install
+npm run tauri:dev      # run in dev mode
+npm run tauri:build    # produce a native installer (.dmg / .msi / .AppImage)
+```
+
+The build output lands in `src-tauri/target/release/bundle/`. Tauri produces
+the right installer for whichever OS you build on.
+
+> The web app at the hosted URL is the primary surface; the Tauri build is
+> there for users who'd rather have a native app.
 
 ## Credits
 
